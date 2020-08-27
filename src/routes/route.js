@@ -59,7 +59,7 @@ router.get('/edit/:id', function(req, res) {
     if(error) throw error;
 
     res.render('edit', {
-      results: results
+      results: results[0]
     });
 
   });
@@ -67,18 +67,17 @@ router.get('/edit/:id', function(req, res) {
 });
 
 // Ruta UPDATE
-router.post('/edit', function(req, res) {
- const product_name = req.body.name;
- const product_price = req.body.price;
- const id = req.params.id;
+router.post('/edit/:id', function(req, res) {
+  const { id } = req.params;
+  const { name, price } = req.body;
 
- const sql = `UPDATE productos SET name='"${product_name}"', price='"${product_price}"' WHERE id='"${id}"'`;
+  const editLink = {
+    name: name,
+    price: price
+  };
 
- conn.query(sql, function(error, results) {
-  if(error) throw error;
-
+  conn.query("UPDATE productos set ? WHERE id = ?", [editLink, id]);
   res.redirect('/');
- });
 
 });
 
